@@ -25,39 +25,63 @@ class Booksmodel{
 		return $hasil;
 	}
 
-	function search_books($user_id, $query){
+	function search_books($user_id, $query, $page=0){
 		$db = connect_db();
 		$search_exploded = explode (" ", $query); 
 		$construct = "";
 		foreach( $search_exploded as $search_each) {
-             	$construct .="AND keywords LIKE '%$search_each%' ";
+             	$construct .="AND title LIKE '%$search_each%' ";
 		}
-		$result = $db->query("SELECT title,mybooks.isbn, author, fullname, mybooks_id, user.user_id, 111045* 
-										DEGREES(ACOS(COS(RADIANS(-6.9758829))
-							                 * COS(RADIANS(latitude))
-							                 * COS(RADIANS(107.6286861) - RADIANS(longitude))
-							                 + SIN(RADIANS(-6.9758829))
-							                 * SIN(RADIANS(latitude)))) AS distance
+		$location = $this->get_location($user_id);
+		$lat = $location['latitude'];
+		$long = $location['longitude'];
+
+		$result = $db->query("SELECT title, mybooks.isbn, author, fullname, longitude, latitude, 
+								mybooks_id, user.user_id, 111045
+										* DEGREES(ACOS(COS(RADIANS('$lat'))
+							                 	* COS(RADIANS(latitude))
+							                 	* COS(RADIANS('$long') - RADIANS(longitude))
+							                 	+ SIN(RADIANS('$lat'))
+							                 	* SIN(RADIANS(latitude)))) AS distance
 								FROM mybooks, books, user 
 								WHERE mybooks.isbn = books.isbn 
 									AND mybooks.user_id = user.user_id
 									AND mybooks.type = 1
 									AND mybooks.status = 1
-									AND user.user_id != '$user_id'");
+									AND user.user_id != '$user_id '".$construct."
+								ORDER BY distance
+								LIMIT $page , 5
+									");
+
+		$res['sum'] = $result->num_rows;
+
+		if ($res['sum'] >= 1) {
+			while ($res['data'][] = $result->fetch_assoc()) {
+			}
+			$res['status'] = true;
+	           	$res['message'] = "Found";
+	        }else{
+	            $res['status'] = false;
+	            $res['message'] = "Not found";
+	        }
+
+	        return $res;
 	}
 
 	function get_location($user_id){
-
+		$db = connect_db();
+		$result = $db->query("SELECT longitude, latitude from user where user_id = '$user_id' ");
+		$row = $result->fetch_assoc();
+		return $row;
 	}
 
-	function getBooks($user_id, $type, $page){
+	function getBooks($user_id, $type){
 		$db = connect_db();
 		$result = $db->query("SELECT *
 								FROM mybooks, books
 								WHERE mybooks.isbn = books.isbn
 								AND user_id = '$user_id'
-								AND type = '$type'
-								LIMIT $page , 30 ");
+								AND type = '$type' ");
 		$res['sum'] = $result->num_rows;
 
 		if ($res['sum'] >= 1) {
@@ -72,6 +96,5 @@ class Booksmodel{
 	        }
 	        return $res;
 	}
-
 
 }

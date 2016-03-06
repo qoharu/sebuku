@@ -22,12 +22,27 @@ $app->post('/aukbykawjdbfyt', function ($req,$res) {
 	return tojson($res,$hasil);
 });
 
+//update location
+$app->post('/vbyuvbklsjdhqwidu', function($req, $res, $args){
+	$account = new Accountmodel;
+	$token = $account->authToken();
+
+	if ($token['status']) {
+		$hasil['status'] = $account->update_location($_POST['longitude'],$_POST['latitude'], $_GET['user_id']);	
+	}else{
+		$hasil = $token;
+	}
+
+	return tojson($res,$hasil);
+});
+
 //search available books
-$app->post('/qppwcfmiqwfuqy/{query}', function ($req,$res,$args) {
+$app->get('/qppwcfmiqwfuqy/{query}/{page}', function ($req,$res,$args) {
 	srcloader('m_books.php');
 	$account = new Accountmodel;
 	$buku = new Booksmodel;
 
+	$token = $account->authToken();
 	if ($token['status']) {
 		$hasil = $buku->search_books((int)$_GET['user_id'], $args['query']);
 	}else{
@@ -43,7 +58,7 @@ $app->post('/kshvbasdualjdahu', function ($req,$res) {
 });
 
 //get mybooks and wishlist
-$app->get('/xmzcvbehduahyd/{type}/{page}',function($req,$res,$args){
+$app->get('/xmzcvbehduahyd/{type}',function($req,$res,$args){
 	srcloader('m_books.php');
 	$account = new Accountmodel;
 	$buku = new Booksmodel;

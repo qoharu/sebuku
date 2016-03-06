@@ -3,11 +3,11 @@ user dummy :
 	username	: a@a.com
 	password	: a
 
+
+#Login with email and password
 [POST] /nbcuvuyswdkajdh
-	Desc : Login with email and password
 	Param :
 		POST [email, password]
-	Res header : JSON
 	Response (ex) :
 	    {
 	        "status": true,
@@ -15,11 +15,25 @@ user dummy :
 	        "user_id": "1",
 	        "fullname": "Pengguna pinter",
 	        "email": "a@a.com",
-	        "token": "112930a14e4b0e57e6a7692652a60f5b1dfb4243"
+	        "token": "112930a14e4b0e57e6a7692652a60f5b1dfb4243",
+	        "latitude": "",
+	        "longitude": ""
 	    }
 
+#Register
+[POST] /aukbykawjdbfyt
+	Param :
+		POST [email, fullname, password]
+	Res (success) : sama dengan login
+	Res (fail) :
+	    {
+	        "status": false,
+	        "message": "Email already registered"
+	    }
+
+
+#Check token
 [POST] /kshvbasdualjdahu?token=[token]&user_id=[user_id]
-	Desc : Check token
 	Param :
 		POST [NULL]
 		GET [token, user_id]
@@ -29,12 +43,45 @@ user dummy :
 	        "message": "You've already logged in"
 	    }
 
-[GET] /xmzcvbehduahyd/{type}/{page}?token=[token]&user_id=[user_id]
-	Desc : Get mybooks and wishlist
+#Check token
+[POST] /vbyuvbklsjdhqwidu?token=[token]&user_id=[user_id]
+	Param :
+		POST [longitude, latitude]
+
+
+#Search Available books by query
+[GET] /qppwcfmiqwfuqy/{query}/{page}?token=[token]&user_id=[user_id]
+	Param :
+		ARGS :
+			- query : query
+			- page : halaman dimulai dari 0
+	Response :
+	    {
+	        "sum": 1,
+	        "data":
+	        [
+	            {
+	                "title": "Supernova: Ksatria, Puteri, dan Bintang Jatuh (Supernova, #1)",
+	                "isbn": "9786022910527",
+	                "author": "Dee Lestari",
+	                "fullname": "Pengguna agak pinter",
+	                "longitude": "107.831871000000",
+	                "latitude": "-7.224749000000",
+	                "mybooks_id": "1",
+	                "user_id": "2",
+	                "distance": "35566.42703757051" //dalam meter
+	            },
+	            null
+	        ],
+	        "status": true,
+	        "message": "Found"
+	    }
+
+#Get mybooks and wishlist
+[GET] /xmzcvbehduahyd/{type}?token=[token]&user_id=[user_id]
 	Param :
 		ARGS :
 			-type : 1 utk mybooks, 2 utk wishlist
-			-page : mulai dari 0, 5 data per page
 		GET [token, user_id]
 	Response :
 	    {
@@ -73,17 +120,17 @@ user dummy :
 	        "message": "Found"
 	    }
 
+#Search books by isbn or query
 [GET] /mmahdauywgdsh/{type}/{query}?token=[token]&user_id=[user_id]
-	Desc : Search books by isbn or query
 	Params :
 		ARGS :
 			-type : 'isbn' or 'query'
 			-query : int for isbn or string for query
 		GET [token, user_id]
 	Response :
-	    "0":
+	    "query": "matematika diskrit",
+	    "data":
 	    {
-	        "query": "matematika diskrit",
 	        "title": "Matematika Diskrit",
 	        "author": "Rinaldi Munir",
 	        "year": 2010,
@@ -91,4 +138,3 @@ user dummy :
 	    },
 	    "total_results": 1,
 	    "status": true
-	}

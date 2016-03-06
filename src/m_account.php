@@ -16,9 +16,17 @@ class Accountmodel{
 		return $res;
 	}
 
-	function updateLocation($longitude,$latitude,$uid){
+	function update_location($longitude,$latitude,$uid){
 		$db = connect_db();
-		$hasil = $db->query("UPDATE user SET longitude = '$longitude', latitude = '$latitude' WHERE user_id = '$uid'  ");
+		$query = $db->query("UPDATE user SET longitude = '$longitude', latitude = '$latitude' WHERE user_id = '$uid'  ");
+		if ($query) {
+			$hasil['status'] = true;
+			$hasil['message'] = "Location udated";
+		}else{
+			$hasil['status'] = false;
+			$hasil['message'] = "Someting wrong";
+		}
+		
 		return $hasil;
 	}
 
