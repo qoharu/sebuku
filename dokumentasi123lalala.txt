@@ -43,7 +43,7 @@ user dummy :
 	        "message": "You've already logged in"
 	    }
 
-#Check token
+#Update location
 [POST] /vbyuvbklsjdhqwidu?token=[token]&user_id=[user_id]
 	Param :
 		POST [longitude, latitude]

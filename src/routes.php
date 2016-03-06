@@ -1,6 +1,5 @@
 <?php
 srcloader('m_account.php');
-
 // Routes
 
 //auth
@@ -36,25 +35,23 @@ $app->post('/vbyuvbklsjdhqwidu', function($req, $res, $args){
 	return tojson($res,$hasil);
 });
 
-//search available books
-$app->get('/qppwcfmiqwfuqy/{query}/{page}', function ($req,$res,$args) {
-	srcloader('m_books.php');
-	$account = new Accountmodel;
-	$buku = new Booksmodel;
-
-	$token = $account->authToken();
-	if ($token['status']) {
-		$hasil = $buku->search_books((int)$_GET['user_id'], $args['query']);
-	}else{
-		$hasil = $token;
-	}
-	return tojson($res,$hasil);
-});
-
 //authtoken
 $app->post('/kshvbasdualjdahu', function ($req,$res) {
 	$account = new Accountmodel;
 	return tojson($res, $account->authToken());
+});
+
+//logout
+$app->get('/bcxgyuaewsdfygdh',function($req,$res,$args){
+	$account = new Accountmodel;
+	$token = $account->authToken();
+	if ($token['status']) {
+		$hasil['status'] = $account->logout((int) $_GET['user_id']);
+		$hasil['message'] = 'logout success';
+	}else{
+		$hasil = $token;
+	}
+	return tojson($res,$hasil);
 });
 
 //get mybooks and wishlist
@@ -78,18 +75,6 @@ $app->get('/xmzcvbehduahyd/{type}',function($req,$res,$args){
 	return tojson($res,$hasil);
 });
 
-//logout
-$app->get('/bcxgyuaewsdfygdh',function($req,$res,$args){
-	$account = new Accountmodel;
-	$token = $account->authToken();
-	if ($token['status']) {
-		$hasil['status'] = $account->logout((int) $_GET['user_id']);
-		$hasil['message'] = 'logout success';
-	}else{
-		$hasil = $token;
-	}
-	return tojson($res,$hasil);
-});
 
 //Search books by isbn or query
 $app->get('/mmahdauywgdsh/{type}/{query}',function($req,$res,$args){
@@ -111,5 +96,20 @@ $app->get('/mmahdauywgdsh/{type}/{query}',function($req,$res,$args){
 		$hasil = $token;
 	}
 	
+	return tojson($res,$hasil);
+});
+
+//search available books
+$app->get('/qppwcfmiqwfuqy/{query}/{page}', function ($req,$res,$args) {
+	srcloader('m_books.php');
+	$account = new Accountmodel;
+	$buku = new Booksmodel;
+
+	$token = $account->authToken();
+	if ($token['status']) {
+		$hasil = $buku->search_books((int)$_GET['user_id'], $args['query']);
+	}else{
+		$hasil = $token;
+	}
 	return tojson($res,$hasil);
 });
