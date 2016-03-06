@@ -1,7 +1,7 @@
 <?php
 
 class Booksmodel{
-	function search($query){
+	function search($query,$isbn){
 		$url = "https://www.goodreads.com/search/index.xml?key=vsEIaGrx3fpSq4YRIiPcg&q=".urlencode($query);
 		// $url ="http://localhost/sebuku/src/dummy.xml";
 		$xml = simplexml_load_string(file_get_contents($url));
@@ -13,14 +13,34 @@ class Booksmodel{
 				$data['author'] = (string)$xml->search->results->work[$i]->best_book->author->name;
 				$data['year'] = (int)$xml->search->results->work[$i]->original_publication_year;
 				$data['image_url'] = (string)$xml->search->results->work[$i]->best_book->image_url;
-
 				$hasil['result'][] = $data;
+				if ($isbn) {
+					$data['isbn'] = $hasil['query'];
+					$this->save_books($data);
+				}
 			}
 			$hasil['status'] = (bool) 1;
 		}else{
 			$hasil['total_results'] = (int) 0;
 			$hasil['status'] = (bool) 0;
 			$hasil['message'] = "Books not found";
+		}
+		return $hasil;
+	}
+
+	function save_books($data){
+		$db = connect_db();
+		$query = $db->query("SELECT * FROM books where books.isbn='$data[isbn]' ");
+		if ($query->num_rows == 0) {
+			$save = $db->query("INSERT INTO books(isbn, title, author, year, img_url) 
+									VALUES ('$data[isbn]','$data[title]','$data[author]','$data[year]','$data[image_url]') ");
+			if ($save) {
+				$hasil = true;
+			}else{
+				$hasil = false;
+			}
+		}else{
+			$hasil = false;
 		}
 		return $hasil;
 	}

@@ -75,6 +75,26 @@ $app->get('/xmzcvbehduahyd/{type}',function($req,$res,$args){
 	return tojson($res,$hasil);
 });
 
+//post mybooks and wishlist
+$app->post('/xmzcvbehduahyd/{type}',function($req,$res,$args){
+	srcloader('m_books.php');
+	$account = new Accountmodel;
+	$buku = new Booksmodel;
+
+	$token = $account->authToken();
+	$user_id = (int) @$_GET['user_id'];
+	$page = (int) $args['page'];
+
+	$type = ($args['type']==1) ? 1 : 2 ;
+	if ((string)$token['status']) {
+		$hasil = $buku->getBooks($user_id, $type, $page);
+	}else{
+		$token['status'] = 3;
+		$hasil = $token;
+	}
+
+	return tojson($res,$hasil);
+});
 
 //Search books by isbn or query
 $app->get('/mmahdauywgdsh/{type}/{query}',function($req,$res,$args){
@@ -85,12 +105,14 @@ $app->get('/mmahdauywgdsh/{type}/{query}',function($req,$res,$args){
 
 	if ($args['type']=='isbn') {
 		$query = (int)$args['query'];
+		$isbn = true;
 	}else{
 		$query = (string)$args['query'];
+		$isbn = false;
 	}
 
 	if ((string)$token['status']) {
-		$hasil = $buku->search($query);
+		$hasil = $buku->search($query,$isbn);
 	}else{
 		$token['status'] = 3;
 		$hasil = $token;
