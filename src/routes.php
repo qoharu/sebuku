@@ -6,7 +6,7 @@ srcloader('m_account.php');
 //auth
 $app->post('/nbcuvuyswdkajdh', function ($req,$res) {
 	$account = new Accountmodel;
-	$email = mysqli_real_escape_string(@$_POST['email']) ;
+	$email = @$_POST['email'];
 	$password = sha1(@$_POST['password']);
 	$auth = $account->auth($email,$password);
 	return tojson($res,$auth);
@@ -15,9 +15,9 @@ $app->post('/nbcuvuyswdkajdh', function ($req,$res) {
 //register
 $app->post('/aukbykawjdbfyt', function ($req,$res) {
 	$account = new Accountmodel;
-	$data['email'] = mysqli_real_escape_string(@$_POST['email']);
+	$data['email'] = @$_POST['email'];
 	$data['password'] = sha1(@$_POST['password']);
-	$data['fullname'] = mysqli_real_escape_string(@$_POST['fullname']);
+	$data['fullname'] = @$_POST['fullname'];
 	$hasil = $account->register($data);
 	return tojson($res,$hasil);
 });
@@ -29,7 +29,7 @@ $app->post('/qppwcfmiqwfuqy/{query}', function ($req,$res,$args) {
 	$buku = new Booksmodel;
 
 	if ($token['status']) {
-		$hasil = $buku->search_books((int)$_GET['user_id'], mysqli_real_escape_string($args['query']));
+		$hasil = $buku->search_books((int)$_GET['user_id'], $args['query']);
 	}else{
 		$hasil = $token;
 	}
