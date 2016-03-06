@@ -1,0 +1,94 @@
+File dokumentasi API untuk sebuku
+user dummy :
+	username	: a@a.com
+	password	: a
+
+[POST] /nbcuvuyswdkajdh
+	Desc : Login with email and password
+	Param :
+		POST [email, password]
+	Res header : JSON
+	Response (ex) :
+	    {
+	        "status": true,
+	        "message": "You're successfully logged in",
+	        "user_id": "1",
+	        "fullname": "Pengguna pinter",
+	        "email": "a@a.com",
+	        "token": "112930a14e4b0e57e6a7692652a60f5b1dfb4243"
+	    }
+
+[POST] /kshvbasdualjdahu?token=[token]&user_id=[user_id]
+	Desc : Check token
+	Param :
+		POST [NULL]
+		GET [token, user_id]
+	Response :
+	    {
+	        "status": true,
+	        "message": "You've already logged in"
+	    }
+
+[GET] /xmzcvbehduahyd/{type}/{page}?token=[token]&user_id=[user_id]
+	Desc : Get mybooks and wishlist
+	Param :
+		ARGS :
+			-type : 1 utk mybooks, 2 utk wishlist
+			-page : mulai dari 0, 5 data per page
+		GET [token, user_id]
+	Response :
+	    {
+	        "sum": 2,
+	        "data":
+	        [
+	            {
+	                "mybooks_id": "1",
+	                "user_id": "1",
+	                "isbn": "9786022910527",
+	                "type": "1",
+	                "status": "1",
+	                "desc": "",
+	                "books_id": "1",
+	                "title": "Supernova: Ksatria, Puteri, dan Bintang Jatuh (Supernova, #1)",
+	                "author": "Dee Lestari",
+	                "year": "2001",
+	                "img_url": "https://d.gr-assets.com/books/1405598031m/22736324.jpg"
+	            },
+	            {
+	                "mybooks_id": "2",
+	                "user_id": "1",
+	                "isbn": "9786028758079",
+	                "type": "1",
+	                "status": "1",
+	                "desc": "Revisi 4",
+	                "books_id": "2",
+	                "title": "Matematika Diskrit",
+	                "author": "Rinaldi Munir",
+	                "year": "2005",
+	                "img_url": ""
+	            },
+	            null
+	        ],
+	        "status": true,
+	        "message": "Found"
+	    }
+
+[GET] /mmahdauywgdsh/{type}/{query}?token=[token]&user_id=[user_id]
+	Desc : Search books by isbn or query
+	Params :
+		ARGS :
+			-type : 'isbn' or 'query'
+			-query : int for isbn or string for query
+		GET [token, user_id]
+	Response :
+	    "0":
+	    {
+	        "query": "matematika diskrit",
+	        "title": "Matematika Diskrit",
+	        "author": "Rinaldi Munir",
+	        "year": 2010,
+	        "image_url": "https://d.gr-assets.com/books/1344780863m/15823600.jpg"
+	    },
+	    "total_results": 1,
+	    "status": true
+	}
