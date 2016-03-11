@@ -50,14 +50,14 @@ class Booksmodel{
 		$search_exploded = explode (" ", $query); 
 		$construct = "";
 		foreach( $search_exploded as $search_each) {
-             	$construct .="AND title LIKE '%$search_each%' ";
+             	$construct .="AND (title LIKE '%$search_each%' OR author LIKE '%$search_each%')  ";
 		}
 		$location = $this->get_location($user_id);
 		$lat = $location['latitude'];
 		$long = $location['longitude'];
 
 		$result = $db->query("SELECT title, mybooks.isbn, author, fullname, mybooks.longitude, mybooks.latitude, 
-								mybooks_id, user.user_id, 111045
+								mybooks_id, user.user_id, img_url, 111045
 										* DEGREES(ACOS(COS(RADIANS('$lat'))
 							                 	* COS(RADIANS(mybooks.latitude))
 							                 	* COS(RADIANS('$long') - RADIANS(mybooks.longitude))
@@ -127,7 +127,7 @@ class Booksmodel{
 
 		$query = $db->query("UPDATE mybooks 
 								SET longitude = '$longitude', latitude = '$latitude' 
-								WHERE user_id = '$uid'
+								WHERE user_id = '$user_id'
 								AND mybooks_id = '$books_id'  ");
 		if ($query) {
 			$hasil['status'] = true;

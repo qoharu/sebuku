@@ -43,7 +43,7 @@ user dummy :
 	        "message": "You've already logged in"
 	    }
 
-#Update location
+#Update user location
 [POST] /vbyuvbklsjdhqwidu?token=[token]&user_id=[user_id]
 	Param :
 		POST [longitude, latitude]
@@ -119,6 +119,26 @@ user dummy :
 	        "status": true,
 	        "message": "Found"
 	    }
+
+
+# post mybooks and wishlist
+[POST] /xmzcvbehduahyd/{type}?token=[token]&user_id=[user_id]
+	Params :
+		ARGS :
+			-type : 1 untuk mybooks, 2 untuk wishlist
+		POST [isbn, description, sell, status, price]
+			sell : 1 untuk tersedia dijual, 0 untuk tukar saja
+			status : 1 untuk available, 0 untuk unavailable
+		Response :
+		    {
+		        "status": true,
+		        "message": "Success"
+		    }
+
+#update books location
+[POST] /xcbvuksyvbwabdhv?token=[token]&user_id=[user_id]
+	Params :
+		POST [books_id]
 
 #Search books by isbn or query
 [GET] /mmahdauywgdsh/{type}/{query}?token=[token]&user_id=[user_id]

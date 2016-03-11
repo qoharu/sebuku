@@ -106,6 +106,7 @@ $app->post('/xcbvuksyvbwabdhv', function($req, $res, $args){
 	srcloader('m_books.php');
 	$buku = new Booksmodel;
 	$account = new Accountmodel;
+	$token = $account->authToken();
 	
 	$user_id = $_GET['user_id'];
 	$books_id = $_POST['books_id'];
