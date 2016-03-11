@@ -56,13 +56,13 @@ class Booksmodel{
 		$lat = $location['latitude'];
 		$long = $location['longitude'];
 
-		$result = $db->query("SELECT title, mybooks.isbn, author, fullname, longitude, latitude, 
+		$result = $db->query("SELECT title, mybooks.isbn, author, fullname, mybooks.longitude, mybooks.latitude, 
 								mybooks_id, user.user_id, 111045
 										* DEGREES(ACOS(COS(RADIANS('$lat'))
-							                 	* COS(RADIANS(latitude))
-							                 	* COS(RADIANS('$long') - RADIANS(longitude))
+							                 	* COS(RADIANS(mybooks.latitude))
+							                 	* COS(RADIANS('$long') - RADIANS(mybooks.longitude))
 							                 	+ SIN(RADIANS('$lat'))
-							                 	* SIN(RADIANS(latitude)))) AS distance
+							                 	* SIN(RADIANS(mybooks.latitude)))) AS distance
 								FROM mybooks, books, user 
 								WHERE mybooks.isbn = books.isbn 
 									AND mybooks.user_id = user.user_id
@@ -95,6 +95,7 @@ class Booksmodel{
 		return $row;
 	}
 
+
 	function getBooks($user_id, $type){
 		$db = connect_db();
 		$result = $db->query("SELECT *
@@ -115,6 +116,51 @@ class Booksmodel{
 	            $res['message'] = "Books are empty";
 	        }
 	        return $res;
+	}
+
+	function update_location($user_id, $books_id){
+		$db = connect_db();
+
+		$location = $this->get_location($user_id);
+		$latitude = $location['latitude'];
+		$longitude = $location['longitude'];
+
+		$query = $db->query("UPDATE mybooks 
+								SET longitude = '$longitude', latitude = '$latitude' 
+								WHERE user_id = '$uid'
+								AND mybooks_id = '$books_id'  ");
+		if ($query) {
+			$hasil['status'] = true;
+			$hasil['message'] = "Location udated";
+		}else{
+			$hasil['status'] = false;
+			$hasil['message'] = "Someting wrong";
+		}
+		
+		return $hasil;
+	}
+
+	function postBooks($user_id, $type, $isbn, $description, $status, $sell, $price){
+		$db = connect_db();
+		$location = $this->get_location($user_id);
+		$lat = $location['latitude'];
+		$long = $location['longitude'];
+
+		$result = $db->query("INSERT INTO mybooks(user_id, isbn, type, status, sell, price, description, longitude, latitude)
+								VALUES ('$user_id', '$isbn', '$type', '$status', '$sell', '$price', '$description', '$long', '$lat')
+			");
+
+		if ($result) {
+			$res['status'] = true;
+			$res['message'] = "Success";
+		}else{
+			$res['status'] = false;
+			$res['message'] = "Failed";
+			$res['isbn'] = $isbn;
+			$res['error'] = $db->error;
+		}
+
+		return $res;
 	}
 
 }

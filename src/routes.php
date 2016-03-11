@@ -81,13 +81,18 @@ $app->post('/xmzcvbehduahyd/{type}',function($req,$res,$args){
 	$account = new Accountmodel;
 	$buku = new Booksmodel;
 
+	$isbn = @$_POST['isbn'];
+	$description = @$_POST['description'];
+	$sell = (int) @$_POST['sell'];
+	$status = (int) @$_POST['status'];
+	$price = (int) @$_POST['price'];
+
 	$token = $account->authToken();
 	$user_id = (int) @$_GET['user_id'];
-	$page = (int) $args['page'];
 
 	$type = ($args['type']==1) ? 1 : 2 ;
 	if ((string)$token['status']) {
-		$hasil = $buku->getBooks($user_id, $type, $page);
+		$hasil = $buku->postBooks($user_id, $type, $isbn, $description, $status, $sell, $price);
 	}else{
 		$token['status'] = 3;
 		$hasil = $token;
@@ -96,7 +101,26 @@ $app->post('/xmzcvbehduahyd/{type}',function($req,$res,$args){
 	return tojson($res,$hasil);
 });
 
-//Search books by isbn or query
+//update books location
+$app->post('/xcbvuksyvbwabdhv', function($req, $res, $args){
+	srcloader('m_books.php');
+	$buku = new Booksmodel;
+	$account = new Accountmodel;
+	
+	$user_id = $_GET['user_id'];
+	$books_id = $_POST['books_id'];
+
+	if ($token['status']) {
+		$hasil = $buku->update_location($user_id,$books_id);
+	}else{
+		$token['status'] = 3;
+		$hasil = $token;		
+	}
+
+	return tojson($res, $hasil);
+});
+
+//search books by isbn or query
 $app->get('/mmahdauywgdsh/{type}/{query}',function($req,$res,$args){
 	srcloader('m_books.php');
 	$buku = new Booksmodel;
@@ -135,3 +159,4 @@ $app->get('/qppwcfmiqwfuqy/{query}/{page}', function ($req,$res,$args) {
 	}
 	return tojson($res,$hasil);
 });
+
